@@ -18,7 +18,7 @@ object TicTacToe {
 
   def drawer(state: State): JPanel = {
     val alpha = Array("a", "b", "c")
-    state.drawables = O(1,0) :: X(0,1) :: state.drawables
+    state.drawables = Array(Array(O(1,0), X(0,1)))
     val panel = new JPanel() {
       override def paint(g: Graphics): Unit = {
         super.paintComponent(g)
@@ -37,7 +37,7 @@ object TicTacToe {
           g.drawString(alpha(y), 0, 90 + y*160)
           g.drawString(alpha(y), 490, 90 + y*160)
         }
-        for (p <- state.drawables) {
+        for (p <- state.drawables(0)) {
           println("Drawing")
           g.drawImage(p.img, 10 + p.x * 160, 10 + p.y * 160, null)
         }
