@@ -1,2 +1,9 @@
 **out/
 **.idea/
+.metals
+.vscode
+project
+.bloop
+build.sbt
+target
+src/Main

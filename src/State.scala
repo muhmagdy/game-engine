@@ -1,3 +1,4 @@
+package `main`
 class State {
   var drawables: Array[Array[Drawable]] = Array()
   var turn: Boolean = true
