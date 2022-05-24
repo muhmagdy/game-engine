@@ -5,11 +5,14 @@ import javax.swing._
 import Games.TicTacToe._
 import Games.Chess._
 
-class GameWindow(val gameName: String) extends JFrame(gameName) {
+class GameWindow(val gameName: String,
+                 val s: State,
+                 val controller: State => Boolean,
+                 val drawer: State => JPanel) extends JFrame(gameName) {
   private val turnLabel = new JLabel("Player 1 Turn")
   private val mainPanel = new JPanel()
   private val layoutManager = new BorderLayout();
-  private val gamePanel = new JPanel()
+  private var gamePanel = drawer(s)
   private val inputField = new JTextField()
   private val submitButton = new JButton("OK")
   //Borders, Only for debugging
@@ -17,7 +20,7 @@ class GameWindow(val gameName: String) extends JFrame(gameName) {
 //  mainPanel setBorder(BorderFactory.createLineBorder(Color.black))
 //  gamePanel setBorder(BorderFactory.createLineBorder(Color.black));
   mainPanel setLayout(layoutManager)
-  gamePanel setPreferredSize new Dimension(500,500)
+/*  gamePanel = */
   inputField setPreferredSize new Dimension(450,25)
 //  inputField setBorder(BorderFactory.createLineBorder(Color.black))
   setDefaultCloseOperation(3)
@@ -40,12 +43,25 @@ class GameWindow(val gameName: String) extends JFrame(gameName) {
 //  setSize(800,800)
   setVisible(true)
   setResizable(false)
-  println(gamePanel.getHeight)
-  println(gamePanel.getWidth)
-  middlePanel remove gamePanel
-  if(gameName == "TicTacToe") middlePanel add TicTacToe.drawer(new State)
-  else if(gameName == "Connect4") middlePanel add TicTacToe.drawer(new State)
+//  println(gamePanel.getHeight)
+//  println(gamePanel.getWidth)
+  //middlePanel remove gamePanel
+//  if(gameName == "TicTacToe") middlePanel add TicTacToe.drawer(new State)
+  if(gameName == "Connect4") middlePanel add TicTacToe.drawer(new State)
   else if(gameName == "Checkers") middlePanel add TicTacToe.drawer(new State)
-  else if(gameName == "Chess") middlePanel add Chess.drawer(Chess.init())
+//  else if(gameName == "Chess") middlePanel add Chess.drawer(Chess.init())
   //gamePanel.paint()
+
+  submitButton addActionListener(e => { s.input = inputField.getText; update();})
+
+  def update(): Unit = {
+    if(controller(s)) {
+//      middlePanel remove gamePanel
+//      gamePanel = drawer(s)
+//      middlePanel add gamePanel
+      gamePanel.repaint()
+      if(s.turn % 2 == 0) turnLabel.setText("Player 1 Turn")
+      else turnLabel.setText("Player 2 Turn")
+    }
+  }
 }

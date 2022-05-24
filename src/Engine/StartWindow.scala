@@ -1,5 +1,8 @@
 package Engine
 
+import Games.Chess.Chess
+import Games.TicTacToe.TicTacToe
+
 import java.awt.event.{ActionEvent, ActionListener}
 import java.awt.{Dimension, GridLayout}
 import javax.swing._
@@ -26,8 +29,8 @@ class StartWindow() extends JFrame("Game Engine") {
   this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE)
   setContentPane(mainPanel)
   pack()
-  ticButton addActionListener(e => { new GameWindow("TicTacToe"); setVisible(false) })
-  connect4Button addActionListener(e => { new GameWindow("Connect 4"); setVisible(false) })
-  checkersButton addActionListener(e => { new GameWindow("Checkers"); setVisible(false) })
-  chessButton addActionListener(e => { new GameWindow("Chess"); setVisible(false) })
+  ticButton addActionListener(e => { new GameWindow("TicTacToe", TicTacToe.init(), TicTacToe.controller, TicTacToe.drawer); setVisible(false) })
+//  connect4Button addActionListener(e => { new GameWindow("Connect 4"); setVisible(false) })
+//  checkersButton addActionListener(e => { new GameWindow("Checkers"); setVisible(false) })
+  chessButton addActionListener(e => { new GameWindow("Chess", Chess.init(), Chess.controller, Chess.drawer); setVisible(false) })
 }
