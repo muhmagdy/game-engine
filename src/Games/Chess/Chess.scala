@@ -39,7 +39,7 @@ object Chess extends {
     this.drawables(7)(5) = Piece("bishop", "white", 7, 5)
     this.drawables(7)(6) = Piece("knight", "white", 7, 6)
     this.drawables(7)(7) = Piece("rook", "white", 7, 7)
-    var isPromoting = false
+    var isPromoting: Boolean = false
     var from: Position = Position(0, 0)
     var to: Position = Position(0, 0)
   }
@@ -83,14 +83,15 @@ object Chess extends {
   def controller(state: State): Boolean = {
     if(isValidSyntaxNorm(state.asInstanceOf[ChessState])) {
       println(s"(syntax-checker) ${state.input} valid syntax :)")
-      state.turn += 1
       parse(state.asInstanceOf[ChessState])
-      if(true) { //checking the validity of move
+      if(doesExist(state.asInstanceOf[ChessState]) && isValidMove(state.asInstanceOf[ChessState])) { //checking the validity of move
+        state.turn += 1
         applyMove(state.asInstanceOf[ChessState])
         return true
       }
       return false
-    } else if(isValidSyntaxProm(state.asInstanceOf[ChessState])) {
+    }
+    else if(isValidSyntaxProm(state.asInstanceOf[ChessState])) {
       println(s"(syntax-checker) ${state.input} valid syntax :)")
       state.turn += 1
       state.asInstanceOf[ChessState].isPromoting = false
@@ -123,5 +124,58 @@ object Chess extends {
       Piece(piece.name, piece.side ,chessState.to.x, chessState.to.y)
   }
 
+  def doesExist(chessState: ChessState): Boolean = {
+    val supposedTurn: Int = chessState.turn % 2
+    var supposedColor: String = ""
+    supposedTurn match {
+      case 0 => supposedColor = "white"
+      case 1 => supposedColor = "black"
+    }
+    var actualColor: String = ""
+    if(chessState.drawables(chessState.from.x)(chessState.from.y)!=null){
+      actualColor = chessState.drawables(chessState.from.x)(chessState.from.y).asInstanceOf[Piece].side
+    }
+    println("supposedColor = " + supposedColor + " && actualColor = " + actualColor)
+    if(supposedColor != actualColor)
+      return false
+    true
+  }
+
+  def isValidMove(c: ChessState): Boolean = {
+    val supposedPiece: String = c.drawables(c.from.x)(c.from.y).asInstanceOf[Piece].name
+    supposedPiece match {
+      case "rook" => rookMove(c)
+      case "knight" => knightMove(c)
+      case "bishop" => bishopMove(c)
+      case "queen" => queenMove(c)
+      case "king" => kingMove(c)
+      case "pawn" => pawnMove(c)
+    }
+  }
+
+  def rookMove(chessState: ChessState): Boolean = {
+    (  (chessState.from.x - chessState.to.x != 0 && chessState.from.y - chessState.to.y ==0)
+    || (chessState.from.x - chessState.to.x == 0 && chessState.from.y - chessState.to.y !=0)
+    )
+  }
+  def knightMove(chessState: ChessState): Boolean = {
+    (  (Math.abs(chessState.from.x - chessState.to.x) == 2 && Math.abs(chessState.from.y - chessState.to.y) ==1)
+    || (Math.abs(chessState.from.x - chessState.to.x) == 1 && Math.abs(chessState.from.y - chessState.to.y) ==2)
+    )
+  }
+  def bishopMove(chessState: ChessState): Boolean = {
+    Math.abs(chessState.from.x - chessState.to.x) == Math.abs(chessState.from.y - chessState.to.y)
+  }
+  def queenMove(chessState: ChessState): Boolean = {
+    rookMove(chessState) || bishopMove(chessState)
+  }
+  def kingMove(chessState: ChessState): Boolean = {
+    ( (Math.abs(chessState.from.x - chessState.to.x) <= 1 && Math.abs(chessState.from.y - chessState.to.y) <=1)
+    && (Math.abs(chessState.from.x - chessState.to.x) + Math.abs(chessState.from.y - chessState.to.y))>0
+    )
+  }
+  def pawnMove(chessState: ChessState): Boolean = {
+    true
+  }
 
 }
