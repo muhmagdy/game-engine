@@ -9,14 +9,14 @@ import Engine._
 
 object TicTacToe {
   case class X(i: Int, j: Int) extends Drawable {
-    override var img: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/o.png"))
+    override var img: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/x.png"))
                                       .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
     override var x: Int = i
     override var y: Int = j
   }
 
   case class O(i: Int, j: Int) extends Drawable {
-    override var img: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/x.png"))
+    override var img: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/o.png"))
                                       .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
     override var x: Int = i
     override var y: Int = j
@@ -61,7 +61,6 @@ object TicTacToe {
       }
     }
     panel setPreferredSize new Dimension(500, 500)
-    //panel setBorder BorderFactory.createLineBorder(Color.black);
     panel
   }
 
@@ -84,10 +83,10 @@ object TicTacToe {
     true
   }
 
-  private def parse(input: String): (Int, Int) = {
-    val alpha = Array("a", "b", "c")
-    val i = alpha.indexOf(input.substring(0,0), 0)
-    val j = input.substring(1,1).toInt
-    (i,j)
-  }
+//  private def parse(input: String): (Int, Int) = {
+//    val alpha = Array("a", "b", "c")
+//    val i = alpha.indexOf(input.substring(0,0), 0)
+//    val j = input.substring(1,1).toInt
+//    (i,j)
+//  }
 }
