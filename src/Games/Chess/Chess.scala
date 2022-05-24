@@ -5,7 +5,7 @@ import Engine.{Drawable, State}
 import java.awt.{Color, Dimension, Graphics, Image}
 import java.io.File
 import javax.imageio.ImageIO
-import javax.swing.{JPanel}
+import javax.swing.JPanel
 
 object Chess extends {
   case class Piece(name: String, side: String, i: Int, j: Int) extends Drawable {
@@ -54,6 +54,8 @@ object Chess extends {
             if (alternateColor) g.setColor(new Color(235, 235, 208))
             else g.setColor(new Color(119, 148, 85))
             g.fillRect(10 + x * 60, 10 + y * 60, 60, 60)
+            g.setColor(Color.black)
+            g.drawRect(10+ x * 60, 10 + y * 60, 60, 60)
             alternateColor = !alternateColor
             val p = state.drawables(y)(x)
             if(p != null) {
@@ -61,15 +63,14 @@ object Chess extends {
             }
           }
           alternateColor = !alternateColor
-          g.setColor(Color.black)
           g.drawString((8-y).toString, 0, 40 + y * 60)
-          g.drawString((8-y).toString, 492, 40 + y * 60)
+          g.drawString((8-y).toString, 493, 40 + y * 60)
           g.drawString(alpha(y), 35 + y * 60, 10)
           g.drawString(alpha(y), 35 + y * 60, 500)
         }
       }
     }
-    panel setPreferredSize new Dimension(500, 500)
+    panel setPreferredSize new Dimension(500, 510)
     //panel setBorder BorderFactory.createLineBorder(Color.black);
     panel
   }
