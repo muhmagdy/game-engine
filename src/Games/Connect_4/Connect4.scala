@@ -11,8 +11,11 @@ import javax.swing.ImageIcon
 
 object Connect4 {
     val path = "src/Games/Connect_4"
-    case class chip(i: Int, j: Int, color: String) extends Drawable{
-        override var img: Image = ImageIO.read(new File(s"$path/assets/$color.png")).getScaledInstance(60, 70, Image.SCALE_SMOOTH)
+    val redChip: Image = ImageIO.read(new File(s"$path/assets/red.png")).getScaledInstance(60, 70, Image.SCALE_SMOOTH)
+    val yellowChip: Image = ImageIO.read(new File(s"$path/assets/yellow.png")).getScaledInstance(60, 70, Image.SCALE_SMOOTH)
+
+    case class chip(i: Int, j: Int, color: Image) extends Drawable{
+        override var img: Image = color
         override var x: Int = j
         override var y: Int = i
     }
@@ -59,10 +62,10 @@ object Connect4 {
       var rv = false
       try{
         var x = myState.input.toInt - 1
-        if (x < 7 && myState.top(x) < 6){
+        if (0 <= x &&x < 7 && myState.top(x) < 6){
           var y = 5 - myState.top(x)
-          var color = "red"
-          if(state.turn % 2 == 0)    color = "yellow"  
+          var color = redChip
+          if(state.turn % 2 == 0)    color = yellowChip
           myState.drawables(y)(x) = chip(y, x, color)
           myState.top(x) = myState.top(x) + 1
           rv = true
