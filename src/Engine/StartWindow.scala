@@ -26,12 +26,8 @@ class StartWindow() extends JFrame("Game Engine") {
   this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE)
   setContentPane(mainPanel)
   pack()
-  ticButton.addActionListener(new ActionListener() {
-    override def actionPerformed(e: ActionEvent): Unit = {
-      new GameWindow("TicTacToe")
-      setVisible(false)
-    }
-  })
-  connect4Button addActionListener(e => new GameWindow("Connect 4"))
-
+  ticButton addActionListener(e => { new GameWindow("TicTacToe"); setVisible(false) })
+  connect4Button addActionListener(e => { new GameWindow("Connect 4"); setVisible(false) })
+  checkersButton addActionListener(e => { new GameWindow("Checkers"); setVisible(false) })
+  chessButton addActionListener(e => { new GameWindow("Chess"); setVisible(false) })
 }

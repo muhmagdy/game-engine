@@ -3,6 +3,7 @@ package Engine
 import java.awt.{BorderLayout, Dimension, FlowLayout}
 import javax.swing._
 import Games.TicTacToe._
+import Games.Chess._
 
 class GameWindow(val gameName: String) extends JFrame(gameName) {
   private val turnLabel = new JLabel("Player 1 Turn")
@@ -42,6 +43,9 @@ class GameWindow(val gameName: String) extends JFrame(gameName) {
   println(gamePanel.getHeight)
   println(gamePanel.getWidth)
   middlePanel remove gamePanel
-  middlePanel add TicTacToe.drawer(new State)
+  if(gameName == "TicTacToe") middlePanel add TicTacToe.drawer(new State)
+  else if(gameName == "Connect4") middlePanel add TicTacToe.drawer(new State)
+  else if(gameName == "Checkers") middlePanel add TicTacToe.drawer(new State)
+  else if(gameName == "Chess") middlePanel add Chess.drawer(Chess.init())
   //gamePanel.paint()
 }
