@@ -1,25 +1,23 @@
 package Games.TicTacToe
 
-import java.awt.{Dimension, Graphics, Image}
+import java.awt.{Dimension, Graphics, Image, Font, Color}
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.JPanel
-import java.awt.Font
 import Engine._
 
 object TicTacToe {
-  case class X(i: Int, j: Int) extends Drawable {
-    override var img: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/x.png"))
-                                      .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
-    override var x: Int = i
-    override var y: Int = j
-  }
 
-  case class O(i: Int, j: Int) extends Drawable {
-    override var img: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/o.png"))
-                                      .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
+  val xImg: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/x.png"))
+    .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
+
+  val oImg: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/o.png"))
+    .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
+
+  case class xoSymbol(i: Int, j: Int, xoImage: Image) extends Drawable{
     override var x: Int = i
     override var y: Int = j
+    override var img: Image = xoImage
   }
 
   class TicState extends State {
@@ -30,35 +28,34 @@ object TicTacToe {
     new TicState
   }
 
-  def drawer(state: State): JPanel = {
+  private def drawBoard(g: Graphics): Unit = {
+    g.setFont(new Font("default", Font.BOLD, 13))
     val alpha = Array("a", "b", "c")
+    var white = true
+    for (y <- 0 until 3) {
+      for (x <- 0 until 3) {
+        if (white) g.setColor(new Color(229, 228, 226))
+        else g.setColor(new Color(113, 121, 126))
+        g.fillRect(10 + x * 160, 15 + y * 160, 160, 160)
+        white = !white
+        g.setColor(Color.black)
+        g.drawString((x + 1).toString, 90 + x * 160, 10)
+        g.drawString((x + 1).toString, 90 + x * 160, 510)
+      }
+      g.drawString(alpha(y), 0, 95 + y * 160)
+      g.drawString(alpha(y), 490, 95 + y * 160)
+    }
+  }
+
+  private def drawSymbol(d: Drawable, g: Graphics): Unit =
+    if ( d!=null ) g.drawImage(d.img, 10 + d.x * 160, 15 + d.y * 160, null)
+
+  def drawer(state: State): JPanel = {
     val panel = new JPanel() {
       override def paint(g: Graphics): Unit = {
-        g.setFont(new Font("default", Font.BOLD, 13))
         super.paintComponent(g)
-        import java.awt.Color
-        var white = true
-        for (y <- 0 until 3) {
-          for (x <- 0 until 3) {
-            if (white) g.setColor(new Color(229, 228, 226))
-            else g.setColor(new Color(113, 121, 126))
-            g.fillRect(10 + x * 160, 15 + y * 160, 160, 160)
-            white = !white
-            g.setColor(Color.black)
-            g.drawString((x + 1).toString, 90 + x * 160, 10)
-            g.drawString((x + 1).toString, 90 + x * 160, 510)
-          }
-          g.drawString(alpha(y), 0, 95 + y * 160)
-          g.drawString(alpha(y), 490, 95 + y * 160)
-        }
-        for(row <- state.drawables){
-          for (p <- row) {
-            if(p != null) {
-              println("Drawing")
-              g.drawImage(p.img, 10 + p.x * 160, 15 + p.y * 160, null)
-            }
-          }
-        }
+        drawBoard(g)
+        state.drawables.foreach(_.foreach(drawSymbol(_,g)))
       }
     }
     panel setPreferredSize new Dimension(500, 510)
@@ -76,18 +73,11 @@ object TicTacToe {
     if(state.drawables(i)(j) != null)
       return false
     if(state.turn%2 == 0) {
-      state.drawables(i)(j) = X(i, j)
+      state.drawables(i)(j) = xoSymbol(i, j, xImg)
     } else{
-      state.drawables(i)(j) = O(i, j)
+      state.drawables(i)(j) = xoSymbol(i, j, oImg)
     }
-    state.turn += 1
+    //state.turn += 1
     true
   }
-
-//  private def parse(input: String): (Int, Int) = {
-//    val alpha = Array("a", "b", "c")
-//    val i = alpha.indexOf(input.substring(0,0), 0)
-//    val j = input.substring(1,1).toInt
-//    (i,j)
-//  }
 }
