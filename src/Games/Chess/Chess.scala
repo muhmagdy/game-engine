@@ -173,10 +173,32 @@ object Chess extends {
     )
   }
   def pawnMove(chessState: ChessState): Boolean = {
-    if(!verifyMoveToFront(chessState))
+    if(!verifyPawnMoveToFront(chessState))
       return false
-    val position : String = pawnPosition(chessState)
-    position match {
+    val position : Array[String] = pawnPosition(chessState)
+
+    var validMoveFlag: Boolean = false
+
+    if(position.contains("blocked")&&(!position.contains("canEat")))
+      return false
+    else if(position.contains("blocked")&&position.contains("canEat")){
+      return Math.abs(chessState.from.y-chessState.to.y)==1 && Math.abs(chessState.from.x-chessState.to.x)==1
+    }
+    if(position.contains("canEat"))
+      validMoveFlag = Math.abs(chessState.from.y-chessState.to.y)==1 && Math.abs(chessState.from.x-chessState.to.x)==1
+    if(position.contains("initial"))
+      validMoveFlag || chessState.from.y-chessState.to.y==0 && Math.abs(chessState.from.x-chessState.to.x)<=2
+    else if(position.contains("willPromote")) {
+      chessState.isPromoting = true
+      true
+    }
+    else if(position.contains("normal"))
+      validMoveFlag || chessState.from.y-chessState.to.y==0 && Math.abs(chessState.from.x-chessState.to.x)==1
+
+    else
+      false
+    /*
+      case "blocked" => false
       case "initial" => chessState.from.y-chessState.to.y==0 && Math.abs(chessState.from.x-chessState.to.x)<=2
       case "willPromote" =>
         if(!(chessState.from.y-chessState.to.y==0 && Math.abs(chessState.from.x-chessState.to.x)==1))
@@ -185,24 +207,53 @@ object Chess extends {
         true
       case "normal" => chessState.from.y-chessState.to.y==0 && Math.abs(chessState.from.x-chessState.to.x)==1
     }
+
+     */
   }
-  def pawnPosition(c: ChessState): String = {
-    if(c.drawables(c.from.x)(c.from.y).asInstanceOf[Piece].side == "black"){
+  def pawnPosition(c: ChessState): Array[String] = {
+    val states : Array[String]  = new Array[String](3)
+    if(c.drawables(c.from.x)(c.from.y).asInstanceOf[Piece]!=null
+    && c.drawables(c.from.x)(c.from.y).asInstanceOf[Piece].side == "black") {
+      try{
+        if(c.drawables(c.from.x+1)(c.from.y+1)!=null
+          && (c.drawables(c.from.x+1)(c.from.y+1).asInstanceOf[Piece].side=="white")
+          || (c.drawables(c.from.x+1)(c.from.y-1)!=null
+          && c.drawables(c.from.x+1)(c.from.y-1).asInstanceOf[Piece].side == "white")
+        )
+          states(0) = "canEat"
+      }
+      catch{
+        case e => states(0) = ""
+//        case e: IndexOutOfBoundsException => return states
+      }
+      if(c.drawables(c.from.x+1)(c.from.y).asInstanceOf[Piece] != null)
+        states(1) = "blocked"
       c.from.x match {
-        case 1 => "initial"
-        case 6 => "willPromote"
-        case _ => "normal"
+        case 1 => states(2) = "initial"
+        case 6 => states(2) = "willPromote"
+        case _ => states(2) = "normal"
+      }
+    } else {
+      try{
+        if((c.drawables(c.from.x-1)(c.from.y+1)!=null&&c.drawables(c.from.x-1)(c.from.y+1).asInstanceOf[Piece].side=="black")
+          ||(c.drawables(c.from.x-1)(c.from.y-1)!=null&&c.drawables(c.from.x-1)(c.from.y-1).asInstanceOf[Piece].side=="black")
+        )
+          states(0) = "canEat"
+      }
+      catch{
+        case e => states(0) = ""
+      }
+      if(c.drawables(c.from.x-1)(c.from.y).asInstanceOf[Piece] != null)
+        states(1) = "blocked"
+      c.from.x match {
+        case 6 => states(2) = "initial"
+        case 1 => states(2) = "willPromote"
+        case _ => states(2) = "normal"
       }
     }
-    else{
-      c.from.x match {
-        case 6 => "initial"
-        case 1 => "willPromote"
-        case _ => "normal"
-      }
-    }
+    states
   }
-  def verifyMoveToFront(c: ChessState): Boolean = {
+  def verifyPawnMoveToFront(c: ChessState): Boolean = {
     if(c.drawables(c.from.x)(c.from.y).asInstanceOf[Piece].side == "black"){
       c.from.x < c.to.x
     }
