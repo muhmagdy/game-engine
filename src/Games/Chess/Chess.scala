@@ -159,7 +159,45 @@ object Chess extends {
   }
 
   def pawnMove(chessState: ChessState): Boolean = {
-    true
+    val dest = chessState.drawables(chessState.to.x)(chessState.to.y).asInstanceOf[Piece]
+    if (chessState.turn % 2 == 0) { //white's turn
+      if(chessState.from.y == chessState.to.y) { //moving straight
+        if(chessState.from.x == 6 && chessState.to.x == 4 ) { //2 steps
+          if(dest == null && chessState.drawables(5)(chessState.to.y) == null) {
+            return true
+          }
+        } else if(chessState.from.x - chessState.to.x == 1 && dest == null) { //1 step
+          if(chessState.to.x == 0) chessState.isPromoting = true
+          return true
+        }
+      } else if(chessState.from.x - chessState.to.x == 1) { //moving forward
+        if(Math.abs(chessState.to.y - chessState.from.y) == 1) { //to the right or left
+          if(dest != null && dest.side == "black") {
+            if(chessState.to.x == 0) chessState.isPromoting = true
+            return true
+          }
+        }
+      }
+    } else { //black's turn
+      if(chessState.from.y == chessState.to.y) { //moving straight
+        if(chessState.from.x == 1 && chessState.to.x == 3 ) { //2 steps
+          if(dest == null && chessState.drawables(2)(chessState.to.y) == null) {
+            return true
+          }
+        } else if(chessState.to.x - chessState.from.x == 1 && dest == null) { //1 step
+          if(chessState.to.x == 7) chessState.isPromoting = true
+          return true
+        }
+      } else if(chessState.to.x - chessState.from.x == 1) { //moving forward
+        if(Math.abs(chessState.to.y - chessState.from.y) == 1) { //to the right or left
+          if(dest != null && dest.side == "white") {
+            if(chessState.to.x == 7) chessState.isPromoting = true
+            return true
+          }
+        }
+      }
+    }
+    false
   }
 
   def applyMove(chessState: ChessState): Boolean = {
@@ -210,7 +248,7 @@ object Chess extends {
     this.drawables(0)(5) = Piece("bishop", "black", 0, 5)
     this.drawables(0)(6) = Piece("knight", "black", 0, 6)
     this.drawables(0)(7) = Piece("rook", "black", 0, 7)
-    for (i <- 0 until (8)) {
+    for (i <- 0 until 8) {
       this.drawables(1)(i) = Piece("pawn", "black", 1, i)
       this.drawables(6)(i) = Piece("pawn", "white", 6, i)
     }
