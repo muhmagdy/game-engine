@@ -38,4 +38,3 @@ class StartWindow() extends JFrame("Game Engine") {
   checkersButton addActionListener(_ => { new GameWindow("Checkers", Checkers.init(), Checkers.controller, Checkers.drawer); setVisible(false) })
   chessButton addActionListener(_ => { new GameWindow("Chess", Chess.init(), Chess.controller, Chess.drawer); setVisible(false) })
 }
-
