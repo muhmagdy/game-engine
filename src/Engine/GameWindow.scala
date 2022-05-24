@@ -1,8 +1,7 @@
 package Engine
 
-import java.awt.{BorderLayout, Dimension, FlowLayout}
+import java.awt.{BorderLayout, Dimension, FlowLayout, Font}
 import javax.swing._
-
 import java.awt.event.ActionListener
 
 class GameWindow(val gameName: String,
@@ -11,7 +10,7 @@ class GameWindow(val gameName: String,
                  val drawer: State => JPanel) extends JFrame(gameName) {
 
   /* Initializing Swing Components */
-  private val turnLabel = new JLabel("Player 1 Turn")
+  private val turnLabel = new JLabel("Player 1 Turn", SwingConstants.CENTER)
   private val mainPanel = new JPanel()
   private val layoutManager = new BorderLayout()
   private val gamePanel = drawer(gameState)
@@ -25,6 +24,7 @@ class GameWindow(val gameName: String,
   mainPanel setBorder BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
   inputField setPreferredSize new Dimension(450,25)
+  turnLabel setFont(new Font("default", Font.BOLD, 25))
 
   private val lowerPanel = new JPanel()
   lowerPanel setLayout new FlowLayout(FlowLayout.CENTER)

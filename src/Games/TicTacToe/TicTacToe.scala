@@ -4,7 +4,7 @@ import java.awt.{Dimension, Graphics, Image}
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.JPanel
-
+import java.awt.Font
 import Engine._
 
 object TicTacToe {
@@ -34,6 +34,7 @@ object TicTacToe {
     val alpha = Array("a", "b", "c")
     val panel = new JPanel() {
       override def paint(g: Graphics): Unit = {
+        g.setFont(new Font("default", Font.BOLD, 13))
         super.paintComponent(g)
         import java.awt.Color
         var white = true
@@ -41,26 +42,26 @@ object TicTacToe {
           for (x <- 0 until 3) {
             if (white) g.setColor(new Color(229, 228, 226))
             else g.setColor(new Color(113, 121, 126))
-            g.fillRect(10 + x * 160, 10 + y * 160, 160, 160)
+            g.fillRect(10 + x * 160, 15 + y * 160, 160, 160)
             white = !white
             g.setColor(Color.black)
             g.drawString((x + 1).toString, 90 + x * 160, 10)
-            g.drawString((x + 1).toString, 90 + x * 160, 500)
+            g.drawString((x + 1).toString, 90 + x * 160, 510)
           }
-          g.drawString(alpha(y), 0, 90 + y * 160)
-          g.drawString(alpha(y), 490, 90 + y * 160)
+          g.drawString(alpha(y), 0, 95 + y * 160)
+          g.drawString(alpha(y), 490, 95 + y * 160)
         }
         for(row <- state.drawables){
           for (p <- row) {
             if(p != null) {
               println("Drawing")
-              g.drawImage(p.img, 10 + p.x * 160, 10 + p.y * 160, null)
+              g.drawImage(p.img, 10 + p.x * 160, 15 + p.y * 160, null)
             }
           }
         }
       }
     }
-    panel setPreferredSize new Dimension(500, 500)
+    panel setPreferredSize new Dimension(500, 510)
     panel
   }
 
