@@ -28,7 +28,7 @@ object Connect4 {
   def draw(x: Drawable, g: Graphics) = {
       if (x != null){
         println("Drawing")
-        g.drawImage(x.img, 7 + x.x * 71, 12 + x.y * 81, null)
+        g.drawImage(x.img, 7 + x.x * 71, 11 + x.y * 78, null)
       }
 
   }
