@@ -171,7 +171,7 @@ object Chess extends {
   }
   def kingMove(chessState: ChessState): Boolean = {
     ( (Math.abs(chessState.from.x - chessState.to.x) <= 1 && Math.abs(chessState.from.y - chessState.to.y) <=1)
-    && (Math.abs(chessState.from.x - chessState.to.x) + Math.abs(chessState.from.y - chessState.to.y))>0
+    &&(Math.abs(chessState.from.x - chessState.to.x) + Math.abs(chessState.from.y - chessState.to.y))>0
     )
   }
   def pawnMove(chessState: ChessState): Boolean = {
