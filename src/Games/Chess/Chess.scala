@@ -27,7 +27,7 @@ object Chess extends {
     this.drawables(0)(5) = Piece("bishop", "black", 0, 5)
     this.drawables(0)(6) = Piece("knight", "black", 0, 6)
     this.drawables(0)(7) = Piece("rook", "black", 0, 7)
-    for(i <- 0 until(8) ) {
+    for(i <- 0 until 8 ) {
       this.drawables(1)(i) = Piece("pawn", "black", 1, i)
       this.drawables(6)(i) = Piece("pawn", "white", 6, i)
     }
@@ -81,21 +81,17 @@ object Chess extends {
   }
 
   def controller(state: State): Boolean = {
-    if(isValidSyntaxNorm(state.asInstanceOf[ChessState])) {
-      println(s"(syntax-checker) ${state.input} valid syntax :)")
-      parse(state.asInstanceOf[ChessState])
+    val chessState = state.asInstanceOf[ChessState]
+    if(isValidSyntaxNorm(chessState)) {
+      println(s"(syntax-checker) ${chessState.input} valid syntax :)")
+      parseInput(chessState)
       if(doesExist(state.asInstanceOf[ChessState]) && isValidMove(state.asInstanceOf[ChessState])) { //checking the validity of move
-        state.turn += 1
-        applyMove(state.asInstanceOf[ChessState])
-        return true
+        return applyMove(chessState)
       }
       return false
-    }
-    else if(isValidSyntaxProm(state.asInstanceOf[ChessState])) {
-      println(s"(syntax-checker) ${state.input} valid syntax :)")
-      state.turn += 1
-      state.asInstanceOf[ChessState].isPromoting = false
-      return true
+    } else if(isValidSyntaxProm(chessState)) {
+      println(s"(syntax-checker) ${chessState.input} valid syntax :)")
+      return applyPromotion(chessState)
     }
     println(s"(syntax-checker) ${state.input} invalid syntax :(")
     false
@@ -106,10 +102,10 @@ object Chess extends {
   }
 
   def isValidSyntaxProm(chessState: ChessState): Boolean = {
-    chessState.input.matches("r|b|n|q") && chessState.isPromoting
+    chessState.input.matches("q|r|b|n") && chessState.isPromoting
   }
 
-  def parse(chessState: ChessState): Unit = {
+  def parseInput(chessState: ChessState): Unit = {
     val alpha = Array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
     chessState.from = Position(56 - chessState.input.charAt(1), alpha.indexOf(chessState.input.charAt(0), 0))
     chessState.to = Position(56 - chessState.input.charAt(3), alpha.indexOf(chessState.input.charAt(2), 0))
@@ -117,11 +113,13 @@ object Chess extends {
     println("(parser-result) to => " + chessState.to.x + " " + chessState.to.y)
   }
 
-  def applyMove(chessState: ChessState): Unit = {
+  def applyMove(chessState: ChessState): Boolean = {
     val piece = chessState.drawables(chessState.from.x)(chessState.from.y).asInstanceOf[Piece]
     chessState.drawables(chessState.from.x)(chessState.from.y) = null
     chessState.drawables(chessState.to.x)(chessState.to.y) =
       Piece(piece.name, piece.side ,chessState.to.x, chessState.to.y)
+    if(!chessState.isPromoting) chessState.turn += 1
+    true
   }
 
   def doesExist(chessState: ChessState): Boolean = {
@@ -178,4 +176,23 @@ object Chess extends {
     true
   }
 
+  def applyPromotion(chessState: ChessState): Boolean = {
+    var color = "white"
+    if(chessState.turn % 2 != 0) {
+      color = "black"
+    }
+    chessState.input match {
+      case "q" => chessState.drawables(chessState.to.x)(chessState.to.y) =
+        Piece("queen", color,chessState.to.x, chessState.to.y)
+      case "r" => chessState.drawables(chessState.to.x)(chessState.to.y) =
+        Piece("rook", color,chessState.to.x, chessState.to.y)
+      case "b" => chessState.drawables(chessState.to.x)(chessState.to.y) =
+        Piece("bishop", color,chessState.to.x, chessState.to.y)
+      case "n" => chessState.drawables(chessState.to.x)(chessState.to.y) =
+        Piece("knight", color,chessState.to.x, chessState.to.y)
+    }
+    chessState.turn += 1
+    chessState.isPromoting = false
+    true
+  }
 }
