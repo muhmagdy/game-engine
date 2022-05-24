@@ -15,6 +15,8 @@ object Chess extends {
     override var y: Int = j
   }
 
+  case class Position(x: Int, y: Int)
+
   class ChessState extends State {
     this.drawables = Array.ofDim[Drawable](8,8)
     this.drawables(0)(0) = Piece("rook", "black", 0, 0)
@@ -37,6 +39,9 @@ object Chess extends {
     this.drawables(7)(5) = Piece("bishop", "white", 7, 5)
     this.drawables(7)(6) = Piece("knight", "white", 7, 6)
     this.drawables(7)(7) = Piece("rook", "white", 7, 7)
+    var isPromoting = false
+    var from: Position = Position(0, 0)
+    var to: Position = Position(0, 0)
   }
 
   def init(): State = {
@@ -75,5 +80,48 @@ object Chess extends {
     panel
   }
 
-  def controller(state: State): Boolean = ???
+  def controller(state: State): Boolean = {
+    if(isValidSyntaxNorm(state.asInstanceOf[ChessState])) {
+      println(s"(syntax-checker) ${state.input} valid syntax :)")
+      state.turn += 1
+      parse(state.asInstanceOf[ChessState])
+      if(true) { //checking the validity of move
+        applyMove(state.asInstanceOf[ChessState])
+        return true
+      }
+      return false
+    } else if(isValidSyntaxProm(state.asInstanceOf[ChessState])) {
+      println(s"(syntax-checker) ${state.input} valid syntax :)")
+      state.turn += 1
+      state.asInstanceOf[ChessState].isPromoting = false
+      return true
+    }
+    println(s"(syntax-checker) ${state.input} invalid syntax :(")
+    false
+  }
+
+  def isValidSyntaxNorm(chessState: ChessState): Boolean = {
+    chessState.input.matches( "[a-h][1-8][a-h][1-8]") && !chessState.isPromoting
+  }
+
+  def isValidSyntaxProm(chessState: ChessState): Boolean = {
+    chessState.input.matches("r|b|n|q") && chessState.isPromoting
+  }
+
+  def parse(chessState: ChessState): Unit = {
+    val alpha = Array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
+    chessState.from = Position(56 - chessState.input.charAt(1), alpha.indexOf(chessState.input.charAt(0), 0))
+    chessState.to = Position(56 - chessState.input.charAt(3), alpha.indexOf(chessState.input.charAt(2), 0))
+    println("(parser-result) from => " + chessState.from.x + " " + chessState.from.y)
+    println("(parser-result) to => " + chessState.to.x + " " + chessState.to.y)
+  }
+
+  def applyMove(chessState: ChessState): Unit = {
+    val piece = chessState.drawables(chessState.from.x)(chessState.from.y).asInstanceOf[Piece]
+    chessState.drawables(chessState.from.x)(chessState.from.y) = null
+    chessState.drawables(chessState.to.x)(chessState.to.y) =
+      Piece(piece.name, piece.side ,chessState.to.x, chessState.to.y)
+  }
+
+
 }
