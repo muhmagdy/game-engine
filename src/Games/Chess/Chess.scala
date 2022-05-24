@@ -173,7 +173,42 @@ object Chess extends {
     )
   }
   def pawnMove(chessState: ChessState): Boolean = {
-    true
+    if(!verifyMoveToFront(chessState))
+      return false
+    val position : String = pawnPosition(chessState)
+    position match {
+      case "initial" => chessState.from.y-chessState.to.y==0 && Math.abs(chessState.from.x-chessState.to.x)<=2
+      case "willPromote" =>
+        if(!(chessState.from.y-chessState.to.y==0 && Math.abs(chessState.from.x-chessState.to.x)==1))
+          return false
+        chessState.isPromoting = true
+        true
+      case "normal" => chessState.from.y-chessState.to.y==0 && Math.abs(chessState.from.x-chessState.to.x)==1
+    }
+  }
+  def pawnPosition(c: ChessState): String = {
+    if(c.drawables(c.from.x)(c.from.y).asInstanceOf[Piece].side == "black"){
+      c.from.x match {
+        case 1 => "initial"
+        case 6 => "willPromote"
+        case _ => "normal"
+      }
+    }
+    else{
+      c.from.x match {
+        case 6 => "initial"
+        case 1 => "willPromote"
+        case _ => "normal"
+      }
+    }
+  }
+  def verifyMoveToFront(c: ChessState): Boolean = {
+    if(c.drawables(c.from.x)(c.from.y).asInstanceOf[Piece].side == "black"){
+      c.from.x < c.to.x
+    }
+    else{
+      c.from.x > c.to.x
+    }
   }
 
   def applyPromotion(chessState: ChessState): Boolean = {
