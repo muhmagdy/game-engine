@@ -56,16 +56,20 @@ object Connect4 {
 
   def controller(state: State): Boolean = {
       var myState: Connect4State = state.asInstanceOf[Connect4State]
-      var x = myState.input.toInt - 1
       var rv = false
-      if (x < 7 && myState.top(x) < 6){
-        var y = 5 - myState.top(x)
-        var color = "red"
-        if(state.turn % 2 == 0)    color = "yellow"  
-        myState.drawables(y)(x) = chip(y, x, color)
-        myState.top(x) = myState.top(x) + 1
-        rv = true
-      }  
+      try{
+        var x = myState.input.toInt - 1
+        if (x < 7 && myState.top(x) < 6){
+          var y = 5 - myState.top(x)
+          var color = "red"
+          if(state.turn % 2 == 0)    color = "yellow"  
+          myState.drawables(y)(x) = chip(y, x, color)
+          myState.top(x) = myState.top(x) + 1
+          rv = true
+        } 
+      }catch {
+        case _: Throwable => {}
+      }
       rv
   }
 }
