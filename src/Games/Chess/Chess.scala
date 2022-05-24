@@ -167,20 +167,16 @@ object Chess extends {
     val position : Array[String] = pawnPosition(chessState)
     if(position.contains("willPromote")){
       chessState.isPromoting = true
-      true
     }
     var validMoveFlag: Boolean = false
 
-    if(position.contains("blocked")&&(!position.contains("canEatLeft"))&&(!position.contains("canEatRight")))
+    if(position.contains("blocked")&&(!position.contains("canEat")))
       return false
-    else if(position.contains("blocked")&&position.contains("canEatRight")){
-      return chessState.from.y-chessState.to.y== -1 && Math.abs(chessState.from.x-chessState.to.x)==1
+    else if(position.contains("blocked")&&position.contains("canEat")){
+      return Math.abs(chessState.from.y-chessState.to.y)==1 && Math.abs(chessState.from.x-chessState.to.x)==1
     }
-    else if(position.contains("blocked")&&position.contains("canEatLeft"))
-      return chessState.from.y-chessState.to.y== 1 && Math.abs(chessState.from.x-chessState.to.x)==1
-    if(position.contains("canEat")) {
+    if(position.contains("canEat"))
       validMoveFlag = Math.abs(chessState.from.y-chessState.to.y)==1 && Math.abs(chessState.from.x-chessState.to.x)==1
-    }
     if(position.contains("initial"))
       validMoveFlag || chessState.from.y-chessState.to.y==0 && Math.abs(chessState.from.x-chessState.to.x)<=2
     else if(position.contains("normal"))
@@ -208,12 +204,10 @@ object Chess extends {
       try{
         if(c.drawables(c.from.x+1)(c.from.y+1)!=null
           && (c.drawables(c.from.x+1)(c.from.y+1).asInstanceOf[Piece].side=="white")
-        )
-          states(0) = "canEatRight"
-        else if((c.drawables(c.from.x+1)(c.from.y-1)!=null
+          || (c.drawables(c.from.x+1)(c.from.y-1)!=null
           && c.drawables(c.from.x+1)(c.from.y-1).asInstanceOf[Piece].side == "white")
         )
-          states(0) = "canEatLeft"
+          states(0) = "canEat"
       }
       catch{
         case e => states(0) = ""
@@ -228,10 +222,10 @@ object Chess extends {
       }
     } else {
       try{
-        if(c.drawables(c.from.x-1)(c.from.y+1)!=null&&c.drawables(c.from.x-1)(c.from.y+1).asInstanceOf[Piece].side=="black")
-          states(0) = "canEatRight"
-        else if(c.drawables(c.from.x-1)(c.from.y-1)!=null&&c.drawables(c.from.x-1)(c.from.y-1).asInstanceOf[Piece].side=="black")
-          states(0) = "canEatLeft"
+        if((c.drawables(c.from.x-1)(c.from.y+1)!=null&&c.drawables(c.from.x-1)(c.from.y+1).asInstanceOf[Piece].side=="black")
+          ||(c.drawables(c.from.x-1)(c.from.y-1)!=null&&c.drawables(c.from.x-1)(c.from.y-1).asInstanceOf[Piece].side=="black")
+        )
+          states(0) = "canEat"
       }
       catch{
         case e => states(0) = ""
