@@ -1,7 +1,5 @@
-package Engine
-
-import java.awt.event.{ActionEvent, ActionListener}
 import java.awt.{Dimension, GridLayout}
+import java.awt.event.{ActionEvent, ActionListener}
 import javax.swing._
 
 object StartWindow {
@@ -16,7 +14,7 @@ class StartWindow() extends JFrame("Game Engine") {
   setResizable(false)
   setMinimumSize(new Dimension(200,200))
   private var mainPanel = new JPanel(gridLayout)
-  private var ticButton = new JButton("TicTacToe")
+  private var ticButton = new JButton("Tic Tac Toe")
   private var connect4Button = new JButton("Connect 4")
   private var checkersButton = new JButton("Checkers")
   private var chessButton = new JButton("Chess")
@@ -26,9 +24,11 @@ class StartWindow() extends JFrame("Game Engine") {
   this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE)
   setContentPane(mainPanel)
   pack()
-  ticButton addActionListener(e => { new GameWindow("TicTacToe"); setVisible(false) })
-  connect4Button addActionListener(e => { new GameWindow("Connect 4"); setVisible(false) })
-  checkersButton addActionListener(e => { new GameWindow("Checkers"); setVisible(false) })
-  chessButton addActionListener(e => { new GameWindow("Chess"); setVisible(false) })
+  ticButton.addActionListener(new ActionListener() {
+    override def actionPerformed(e: ActionEvent): Unit = {
+      new GameWindow("Tic Tac Toe")
+      setVisible(false)
+    }
+  })
+  connect4Button addActionListener(e => new GameWindow("Connect 4"))
 }
-

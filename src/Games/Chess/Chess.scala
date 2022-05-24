@@ -52,7 +52,7 @@ object Chess extends {
         for (y <- 0 until 8) {
           for (x <- 0 until 8) {
             if (alternateColor) g.setColor(new Color(235, 235, 208))
-            else g.setColor(new Color(119, 148, 85))
+            else g.setColor(new Color(120, 69, 69))
             g.fillRect(10 + x * 60, 10 + y * 60, 60, 60)
             alternateColor = !alternateColor
             val p = state.drawables(y)(x)
