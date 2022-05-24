@@ -3,6 +3,7 @@ package Engine
 import Games.Checkers.Checkers
 import Games.Chess.Chess
 import Games.TicTacToe.TicTacToe
+import Games.Connect_4.Connect4
 
 import java.awt.{Dimension, GridLayout}
 import javax.swing._
@@ -34,7 +35,7 @@ class StartWindow() extends JFrame("Game Engine") {
   pack()
 
   ticButton addActionListener(_ => { new GameWindow("TicTacToe", TicTacToe.init(), TicTacToe.controller, TicTacToe.drawer); setVisible(false) })
-//  connect4Button addActionListener(e => { new GameWindow("Connect 4"); setVisible(false) })
   checkersButton addActionListener(_ => { new GameWindow("Checkers", Checkers.init(), Checkers.controller, Checkers.drawer); setVisible(false) })
+  connect4Button addActionListener(e => { new GameWindow("Connect 4", Connect4.init, Connect4.controller, Connect4.drawer); setVisible(false) })
   chessButton addActionListener(_ => { new GameWindow("Chess", Chess.init(), Chess.controller, Chess.drawer); setVisible(false) })
 }
