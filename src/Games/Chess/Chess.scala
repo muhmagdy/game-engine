@@ -2,7 +2,7 @@ package Games.Chess
 
 import Engine.{Drawable, State}
 
-import java.awt.{Color, Dimension, Graphics, Image}
+import java.awt.{Color, Dimension, Font, Graphics, Image}
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.JPanel
@@ -17,30 +17,30 @@ object Chess extends {
     val panel = new JPanel() {
       override def paint(g: Graphics): Unit = {
         super.paintComponent(g)
+        g.setFont(new Font("default", Font.BOLD, 13))
         var alternateColor = true
         for (y <- 0 until 8) {
           for (x <- 0 until 8) {
-            if (alternateColor) g.setColor(new Color(235, 235, 208))
-            else g.setColor(new Color(120, 69, 69))
-            g.fillRect(10 + x * 60, 10 + y * 60, 60, 60)
+            if (alternateColor) g.setColor(Color.white) //new Color(235, 235, 208)
+            else g.setColor(new Color(128, 51, 0))
+            g.fillRect(10 + x * 60, 15 + y * 60, 60, 60)
             g.setColor(Color.black)
-            g.drawRect(10 + x * 60, 10 + y * 60, 60, 60)
+            g.drawRect(10 + x * 60, 15 + y * 60, 60, 60)
             alternateColor = !alternateColor
             val p = state.drawables(y)(x)
             if (p != null) {
-              g.drawImage(p.img, 25 + p.y * 60, 25 + p.x * 60, null)
+              g.drawImage(p.img, 25 + p.y * 60, 30 + p.x * 60, null)
             }
           }
           alternateColor = !alternateColor
-          g.drawString((8 - y).toString, 0, 40 + y * 60)
-          g.drawString((8 - y).toString, 493, 40 + y * 60)
+          g.drawString((8 - y).toString, 0, 48 + y * 60)
+          g.drawString((8 - y).toString, 493, 48 + y * 60)
           g.drawString(alpha(y), 35 + y * 60, 10)
-          g.drawString(alpha(y), 35 + y * 60, 500)
+          g.drawString(alpha(y), 35 + y * 60, 507)
         }
       }
     }
     panel setPreferredSize new Dimension(500, 510)
-    //panel setBorder BorderFactory.createLineBorder(Color.black);
     panel
   }
 
