@@ -49,7 +49,8 @@ object Chess extends {
     if (isValidSyntaxNorm(chessState)) {
       println(s"(syntax-checker) ${chessState.input} valid syntax :)")
       if (parseInput(chessState) && isValidMove(chessState)) {
-        return applyMove(chessState)
+        saveState(chessState)
+        return applyMove(chessState) && kingIsSafe(chessState)
       }
       return false
     } else if (isValidSyntaxProm(chessState)) {
@@ -72,8 +73,8 @@ object Chess extends {
     val alpha = Array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
     chessState.from = Position(56 - chessState.input.charAt(1), alpha.indexOf(chessState.input.charAt(0), 0))
     chessState.to = Position(56 - chessState.input.charAt(3), alpha.indexOf(chessState.input.charAt(2), 0))
-    println("(parser-result) from => " + chessState.from.x + " " + chessState.from.y)
-    println("(parser-result) to => " + chessState.to.x + " " + chessState.to.y)
+    println("(parser-result) from => (" + chessState.from.x + ", " + chessState.from.y
+      + ") to => (" + chessState.to.x + ", " + chessState.to.y + ")")
     chessState.from.x != chessState.to.x || chessState.from.y != chessState.to.y
   }
 
@@ -81,8 +82,14 @@ object Chess extends {
     val piece = chessState.drawables(chessState.from.x)(chessState.from.y).asInstanceOf[Piece]
     val dest = chessState.drawables(chessState.to.x)(chessState.to.y).asInstanceOf[Piece]
     val turn = chessState.turn
-    if (piece == null || (piece.side == "black" && turn % 2 == 0) || (piece.side == "white" && turn % 2 == 1)) return false
-    if (dest != null && ((dest.side == "black" && turn % 2 == 1) || (dest.side == "white" && turn % 2 == 0))) return false
+    if (piece == null || (piece.side == "black" && turn % 2 == 0) || (piece.side == "white" && turn % 2 == 1)){
+      println("(move-validator) Don't move void or pieces from other side!")
+      return false
+    }
+    if (dest != null && ((dest.side == "black" && turn % 2 == 1) || (dest.side == "white" && turn % 2 == 0))) {
+      println("(move-validator) I can't kill my teammate :(")
+      return false
+    }
     piece.name match {
       case "rook" => rookMove(chessState)
       case "knight" => knightMove(chessState)
@@ -200,18 +207,77 @@ object Chess extends {
     false
   }
 
+  def kingIsSafe(chessState: ChessState): Boolean = {
+    var color: String = ""
+    val destPosition = chessState.to
+    if(chessState.turn % 2 != 0)  {
+      color = "white"
+      chessState.to = chessState.blackKingPosition
+    } else {
+      color = "black"
+      chessState.to = chessState.whiteKingPosition
+    }
+    chessState.turn += 1
+    for(x <- 0 until 8) {
+      for(y <- 0 until 8) {
+        val piece = chessState.drawables(x)(y).asInstanceOf[Piece]
+        if (piece != null && piece.side == color) {
+          chessState.from = Position(piece.x, piece.y)
+          if(isValidMove(chessState)){
+            restoreState(chessState, destPosition)
+            return false
+          }
+        }
+      }
+    }
+    if(chessState.isPromoting) {
+      chessState.turn -= 1
+      chessState.to = destPosition
+    }
+    true
+  }
+
+  def saveState(chessState: ChessState): Unit = {
+    chessState.lastMoved = chessState.drawables(chessState.from.x)(chessState.from.y).asInstanceOf[Piece]
+    chessState.lastEaten = chessState.drawables(chessState.to.x)(chessState.to.y).asInstanceOf[Piece]
+  }
+
+  def restoreState(chessState: ChessState, position: Position): Unit = {
+    val lastMoved = chessState.lastMoved
+    val lastEaten = chessState.lastEaten
+    chessState.drawables(lastMoved.x)(lastMoved.y) = lastMoved
+
+    if(lastMoved.name == "king" && lastMoved.side == "black") {
+      chessState.blackKingPosition = Position(lastMoved.x, lastMoved.y)
+    } else if(lastMoved.name == "king" && lastMoved.side == "white") {
+      chessState.whiteKingPosition = Position(lastMoved.x, lastMoved.y)
+    }
+
+    if(lastEaten == null) {
+      chessState.drawables(position.x)(position.y) = null
+    } else {
+      chessState.drawables(lastEaten.x)(lastEaten.y) = lastEaten
+    }
+
+    if(chessState.isPromoting) chessState.isPromoting = false
+    chessState.turn -= 1
+  }
+
   def applyMove(chessState: ChessState): Boolean = {
     val piece = chessState.drawables(chessState.from.x)(chessState.from.y).asInstanceOf[Piece]
+    if(piece.name == "king" && piece.side == "white") chessState.whiteKingPosition = chessState.to
+    else if(piece.name == "king" && piece.side == "black") chessState.blackKingPosition = chessState.to
     chessState.drawables(chessState.from.x)(chessState.from.y) = null
     chessState.drawables(chessState.to.x)(chessState.to.y) =
       Piece(piece.name, piece.side, chessState.to.x, chessState.to.y)
-    if (!chessState.isPromoting) chessState.turn += 1
     true
   }
 
   def applyPromotion(chessState: ChessState): Boolean = {
-    var color = "white"
-    if (chessState.turn % 2 != 0) {
+    var color: String = ""
+    if(chessState.turn % 2 == 0) {
+      color = "white"
+    } else {
       color = "black"
     }
     chessState.input match {
@@ -263,5 +329,9 @@ object Chess extends {
     var isPromoting: Boolean = false
     var from: Position = Position(0, 0)
     var to: Position = Position(0, 0)
+    var whiteKingPosition: Position = Position(7, 4)
+    var blackKingPosition: Position = Position(0, 4)
+    var lastMoved: Piece = null
+    var lastEaten: Piece = null
   }
 }
