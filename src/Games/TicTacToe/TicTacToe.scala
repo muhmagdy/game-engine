@@ -1,6 +1,6 @@
 package Games.TicTacToe
 
-import java.awt.{Dimension, Graphics, Image, Font, Color}
+import java.awt.{Color, Dimension, Font, Graphics, Image, Toolkit}
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.JPanel
@@ -8,11 +8,19 @@ import Engine._
 
 object TicTacToe {
 
-  val xImg: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/x.png"))
+//  val xImg: Image = ImageIO.read(new File("resources/TicTacToe/x.png"))
+//    .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
+  val tk: Toolkit = Toolkit.getDefaultToolkit
+  val cl: ClassLoader = this.getClass.getClassLoader
+  val xImg: Image = tk.getImage(cl.getResource("TicTacToe/x.png"))
     .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
-
-  val oImg: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/o.png"))
+  val oImg: Image = tk.getImage(cl.getResource("TicTacToe/o.png"))
     .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
+//  val oImg: Image = ImageIO.read(new File("resources/TicTacToe/o.png"))
+//    .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
+//
+//  val oImg: Image = ImageIO.read(new File(getClass.getClassLoader.getResource("TicTacToe/o.png").getFile))
+//    .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
 
   case class xoSymbol(i: Int, j: Int, xoImage: Image) extends Drawable{
     override var x: Int = i
@@ -55,6 +63,7 @@ object TicTacToe {
       override def paint(g: Graphics): Unit = {
         super.paintComponent(g)
         drawBoard(g)
+        println(state.toString)
         state.drawables.foreach(_.foreach(drawSymbol(_,g)))
       }
     }
