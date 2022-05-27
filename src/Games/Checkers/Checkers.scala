@@ -6,6 +6,7 @@ import java.awt.{Color, Dimension, Graphics, Image}
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.JPanel
+import scala.util.control.Breaks.{break, breakable}
 
 object Checkers {
 
@@ -136,18 +137,75 @@ object Checkers {
         return false
       }
     }
-    var destpos : Position = null
-    if(steps==2){
-      destpos = Position((from.x+to.x)/2,(from.y+to.y)/2)
-      val dest = checkersState.drawables(destpos.x)(destpos.y).asInstanceOf[Piece]
-      if(dest == null || dest.side.equals(piece.side)){
-        println("(move-validator) Don't move two steps with with out enemy piece to eat!")
+
+    val capPoses = allCap(checkersState)
+    if(capPoses.nonEmpty){
+      if(steps!=2){
+        println("(move-validator) you MUST capture")
+        return false
+      }
+      val destpos : Position = Position((from.x+to.x)/2,(from.y+to.y)/2)
+      if(!capPoses.exists({pos=>pos.x==destpos.x && pos.y==destpos.y })){
+        println("(move-validator) You can not capture this!")
         return false
       }
       checkersState.drawables(destpos.x)(destpos.y) = null
+      checkersState.turn -= 1
     }
+
     true
   }
+
+  def allCap(checkersState: CheckersState): List[Position] ={
+    val side:String = if(checkersState.turn%2==0){"white"} else {"black"}
+    var res: List[Position] = List()
+    for(i <- 0 until 8){
+      for(j <- 0 until 8) {
+          var piece: Piece =  checkersState.drawables(i)(j).asInstanceOf[Piece]
+          if(piece != null && piece.side.equals(side))
+            res = res ::: captures(checkersState, piece)
+
+      }
+    }
+    res
+  }
+
+  def captures(checkersState: CheckersState, piece:Piece): List[Position] = {
+    var res: List[Position] = List[Position]()
+
+    var poses:List[Position] = List()
+    var enemy: String = ""
+    if(piece.mode.equals("super")){
+      poses = List(Position(1,1), Position(1,-1), Position(-1,1), Position(-1,-1))
+      if(piece.side.equals("black")){
+        enemy = "white"
+      }else{
+        enemy = "black"
+      }
+    }else if(piece.side.equals("black")){
+      poses = List(Position(1,1), Position(1,-1))
+      enemy = "white"
+    }else{
+      poses = List(Position(-1,1), Position(-1,-1))
+      enemy = "black"
+    }
+    val x = piece.x
+    val y = piece.y
+    for(pos<-poses){
+      breakable{
+        if(2*pos.x+x< 0 || 2*pos.x+x> 7 || 2*pos.y+y< 0 || 2*pos.y+y> 7) {
+          break
+        }
+        val cap = checkersState.drawables(x + pos.x)(y + pos.y).asInstanceOf[Piece]
+
+        if(cap!= null && cap.side.equals(enemy) && checkersState.drawables(x + 2*pos.x)(y + 2*pos.y).asInstanceOf[Piece]==null){
+           res = res :+ Position(x + pos.x , y + pos.y )
+        }
+      }
+    }
+    res
+  }
+
 
   def applyMove(checkersState: CheckersState): Boolean = {
     val piece = checkersState.drawables(checkersState.from.x)(checkersState.from.y).asInstanceOf[Piece]
