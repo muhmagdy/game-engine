@@ -77,7 +77,7 @@ object TicTacToe {
     } else{
       state.drawables(i)(j) = xoSymbol(i, j, oImg)
     }
-    //state.turn += 1
+    state.turn += 1
     true
   }
 }

@@ -50,7 +50,7 @@ class GameWindow(val gameName: String,
   def update(): Unit = {
     if(controller(gameState)) {
       gamePanel.repaint()
-      gameState.turn = gameState.turn + 1
+      //gameState.turn = gameState.turn + 1
       if(gameState.turn % 2 == 0) turnLabel setText "Player 1 Turn"
       else turnLabel setText "Player 2 Turn"
     }

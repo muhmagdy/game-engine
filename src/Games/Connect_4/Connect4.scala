@@ -69,6 +69,7 @@ object Connect4 {
           myState.drawables(y)(x) = chip(y, x, color)
           myState.top(x) = myState.top(x) + 1
           rv = true
+          state.turn += 1
         } 
       }catch {
         case _: Throwable => {}
