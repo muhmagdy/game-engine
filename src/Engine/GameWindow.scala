@@ -49,6 +49,7 @@ class GameWindow(val gameName: String,
 
   def update(): Unit = {
     if(controller(gameState)) {
+      gameState.turn += 1
       gamePanel.repaint()
       inputField setText ""
       if(gameState.turn % 2 == 0) turnLabel setText "Player 1 Turn"
