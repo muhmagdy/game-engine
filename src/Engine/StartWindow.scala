@@ -36,6 +36,6 @@ class StartWindow() extends JFrame("Game Engine") {
 
   ticButton addActionListener(_ => { new GameWindow("TicTacToe", TicTacToe.init(), TicTacToe.controller, TicTacToe.drawer); setVisible(false) })
   checkersButton addActionListener(_ => { new GameWindow("Checkers", Checkers.init(), Checkers.controller, Checkers.drawer); setVisible(false) })
-  connect4Button addActionListener(e => { new GameWindow("Connect 4", Connect4.init, Connect4.controller, Connect4.drawer); setVisible(false) })
+  connect4Button addActionListener(e => { new GameWindow("Connect 4", Connect4.init(), Connect4.controller, Connect4.drawer); setVisible(false) })
   chessButton addActionListener(_ => { new GameWindow("Chess", Chess.init(), Chess.controller, Chess.drawer); setVisible(false) })
 }

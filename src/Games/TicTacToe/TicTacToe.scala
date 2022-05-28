@@ -8,10 +8,10 @@ import Engine._
 
 object TicTacToe {
 
-  val xImg: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/x.png"))
+  val xImg: Image = ImageIO.read(new File("resources/tictactoe/x.png"))
     .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
 
-  val oImg: Image = ImageIO.read(new File("src/Games/TicTacToe/assets/o.png"))
+  val oImg: Image = ImageIO.read(new File("resources/tictactoe/o.png"))
     .getScaledInstance(160, 160, Image.SCALE_SMOOTH)
 
   case class xoSymbol(i: Int, j: Int, xoImage: Image) extends Drawable{

@@ -12,7 +12,7 @@ object Checkers {
 
   /* There are 2 modes for a piece "regular" which only can moves forward, and "super" which can moves forward and backward */
   case class Piece(mode: String, side: String, i: Int, j: Int) extends Drawable {
-    override var img: Image = ImageIO.read(new File(s"src/Games/Checkers/assets/$side-$mode.png"))
+    override var img: Image = ImageIO.read(new File(s"resources/checkers/$side-$mode.png"))
       .getScaledInstance(60, 60, Image.SCALE_SMOOTH)
     override var x: Int = i
     override var y: Int = j

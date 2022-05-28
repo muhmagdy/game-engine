@@ -288,7 +288,7 @@ object Chess extends {
   }
 
   case class Piece(name: String, side: String, i: Int, j: Int) extends Drawable {
-    override var img: Image = ImageIO.read(new File(s"src/Games/Chess/assets/$side/$name.png"))
+    override var img: Image = ImageIO.read(new File(s"resources/chess/$side/$name.png"))
       .getScaledInstance(30, 30, Image.SCALE_SMOOTH)
     override var x: Int = i
     override var y: Int = j

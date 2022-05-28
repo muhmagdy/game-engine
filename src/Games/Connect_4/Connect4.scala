@@ -5,14 +5,16 @@ import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.{BorderFactory, JPanel}
 import Engine.{Drawable, State}
+
 import java.awt.image.BufferedImage
+import java.net.URL
 import javax.swing.JLabel
 import javax.swing.ImageIcon
 
 object Connect4 {
-    val path = "src/Games/Connect_4"
-    val redChip: Image = ImageIO.read(new File(s"$path/assets/red.png")).getScaledInstance(60, 70, Image.SCALE_SMOOTH)
-    val yellowChip: Image = ImageIO.read(new File(s"$path/assets/yellow.png")).getScaledInstance(60, 70, Image.SCALE_SMOOTH)
+    val path = "resources/connect_4"
+    val redChip: Image = ImageIO.read(new File(s"$path/red.png")).getScaledInstance(60, 70, Image.SCALE_SMOOTH)
+    val yellowChip: Image = ImageIO.read(new File(s"$path/yellow.png")).getScaledInstance(60, 70, Image.SCALE_SMOOTH)
 
     case class chip(i: Int, j: Int, color: Image) extends Drawable{
         override var img: Image = color
@@ -42,7 +44,7 @@ object Connect4 {
     val panel = new JPanel() {
       override def paint(g: Graphics): Unit = {
         super.paintComponent(g)
-        var boardImg: Image = ImageIO.read(new File(s"$path/assets/board.png"))
+        var boardImg: Image = ImageIO.read(new File(s"$path/board.png"))
         g.drawImage(boardImg, 0, 0, this)
         println("drawing")
         state.drawables.foreach(drawArray(_, g))
