@@ -3,6 +3,8 @@ package Engine
 import java.awt.{BorderLayout, Dimension, FlowLayout, Font}
 import javax.swing._
 import java.awt.event.ActionListener
+import java.io.File
+import javax.imageio.ImageIO
 
 class GameWindow(val gameName: String,
                  val gameState: State,
@@ -20,6 +22,8 @@ class GameWindow(val gameName: String,
   /* Setting main panel options */
   setDefaultCloseOperation(3)
   setContentPane(mainPanel)
+  setIconImage(ImageIO.read(new File("resources/icon.png")))
+
   mainPanel setLayout layoutManager
   mainPanel setBorder BorderFactory.createEmptyBorder(10, 10, 10, 10)
 

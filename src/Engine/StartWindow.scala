@@ -6,6 +6,8 @@ import Games.TicTacToe.TicTacToe
 import Games.Connect_4.Connect4
 
 import java.awt.{Dimension, GridLayout}
+import java.io.File
+import javax.imageio.ImageIO
 import javax.swing._
 
 object StartWindow {
@@ -16,6 +18,11 @@ object StartWindow {
 }
 
 class StartWindow() extends JFrame("Game Engine") {
+  try{
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
+  }catch {
+    case e: Exception => e.printStackTrace()
+  }
   var gridLayout = new GridLayout(5,1,10,10)
   private val mainPanel = new JPanel(gridLayout)
   private val ticButton = new JButton("TicTacToe")
@@ -25,6 +32,7 @@ class StartWindow() extends JFrame("Game Engine") {
 
   setResizable(false)
   setMinimumSize(new Dimension(200,200))
+  setIconImage(ImageIO.read(new File("resources/icon.png")))
 
   mainPanel setBorder BorderFactory.createEmptyBorder(10,10,10,10)
   mainPanel add ticButton; mainPanel add connect4Button
