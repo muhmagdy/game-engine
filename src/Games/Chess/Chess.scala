@@ -48,7 +48,7 @@ object Chess extends {
     val chessState = state.asInstanceOf[ChessState]
     if (isValidSyntax(chessState)) {
       println(s"(syntax-checker) ${chessState.input} valid syntax :)")
-      if (parseInput(chessState) && isValidMove(chessState, chessState.turn)) {
+      if (parseInput(chessState) && isValidMove(chessState, chessState.turn, ignorePromotion = false)) {
         applyMove(chessState)
         return kingIsSafe(chessState)
       }
@@ -75,7 +75,7 @@ object Chess extends {
     chessState.from.x != chessState.to.x || chessState.from.y != chessState.to.y
   }
 
-  def isValidMove(chessState: ChessState, turn: Int): Boolean = {
+  def isValidMove(chessState: ChessState, turn: Int, ignorePromotion: Boolean): Boolean = {
     val piece = chessState.drawables(chessState.from.x)(chessState.from.y).asInstanceOf[Piece]
     val dest = chessState.drawables(chessState.to.x)(chessState.to.y).asInstanceOf[Piece]
     if (piece == null || (piece.side == "black" && turn % 2 == 0) || (piece.side == "white" && turn % 2 == 1)) {
@@ -92,7 +92,7 @@ object Chess extends {
       case "bishop" => bishopMove(chessState)
       case "queen" => queenMove(chessState)
       case "king" => kingMove(chessState)
-      case "pawn" => pawnMove(chessState)
+      case "pawn" => pawnMove(chessState, turn, ignorePromotion)
     }
   }
 
@@ -165,21 +165,22 @@ object Chess extends {
       Math.abs(chessState.from.y - chessState.to.y) <= 1
   }
 
-  def pawnMove(chessState: ChessState): Boolean = {
+  def pawnMove(chessState: ChessState, turn: Int, ignorePromotion: Boolean): Boolean = {
     val dest = chessState.drawables(chessState.to.x)(chessState.to.y).asInstanceOf[Piece]
-    if (chessState.turn % 2 == 0) { //white's turn
+    val isPromoting = ignorePromotion || chessState.input.length == 5
+    if (turn % 2 == 0) { //white's turn
       if (chessState.from.y == chessState.to.y) { //moving straight
         if (chessState.from.x == 6 && chessState.to.x == 4) { //2 steps
           if (dest == null && chessState.drawables(5)(chessState.to.y) == null) {
             return true
           }
         } else if (chessState.from.x - chessState.to.x == 1 && dest == null) { //1 step
-          if ((chessState.input.length == 5 && chessState.to.x == 0) || chessState.to.x != 0) return true
+          if ((isPromoting && chessState.to.x == 0) || chessState.to.x != 0) return true
         }
       } else if (chessState.from.x - chessState.to.x == 1) { //moving diagonally
         if (Math.abs(chessState.to.y - chessState.from.y) == 1) { //to the right or left
           if (dest != null && dest.side == "black") {
-            if ((chessState.input.length == 5 && chessState.to.x == 0) || chessState.to.x != 0) return true
+            if ((isPromoting && chessState.to.x == 0) || chessState.to.x != 0) return true
           }
         }
       }
@@ -190,12 +191,12 @@ object Chess extends {
             return true
           }
         } else if (chessState.to.x - chessState.from.x == 1 && dest == null) { //1 step
-          if ((chessState.input.length == 5 && chessState.to.x == 7) || chessState.to.x != 7) return true
+          if ((isPromoting && chessState.to.x == 7) || chessState.to.x != 7) return true
         }
       } else if (chessState.to.x - chessState.from.x == 1) { //moving diagonally
         if (Math.abs(chessState.to.y - chessState.from.y) == 1) { //to the right or left
           if (dest != null && dest.side == "white") {
-            if ((chessState.input.length == 5 && chessState.to.x == 7) || chessState.to.x != 7) return true
+            if ((isPromoting && chessState.to.x == 7) || chessState.to.x != 7) return true
           }
         }
       }
@@ -218,7 +219,7 @@ object Chess extends {
         val piece = chessState.drawables(x)(y).asInstanceOf[Piece]
         if (piece != null && piece.side == color) {
           chessState.from = Position(x, y)
-          if (isValidMove(chessState, chessState.turn + 1)) {
+          if (isValidMove(chessState, chessState.turn + 1, ignorePromotion = true)) {
             restoreState(chessState, destPosition)
             return false
           }
