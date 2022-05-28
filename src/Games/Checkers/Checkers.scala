@@ -215,7 +215,6 @@ object Checkers {
     }else{
       checkersState.drawables(checkersState.to.x)(checkersState.to.y) = Piece(piece.mode, piece.side, checkersState.to.x, checkersState.to.y)
     }
-    checkersState.turn += 1
     true
   }
 
