@@ -150,7 +150,6 @@ object Checkers {
         return false
       }
       checkersState.drawables(destpos.x)(destpos.y) = null
-      checkersState.turn -= 1
     }
 
     true
