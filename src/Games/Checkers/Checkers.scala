@@ -150,6 +150,8 @@ object Checkers {
         return false
       }
       checkersState.drawables(destpos.x)(destpos.y) = null
+    }else if(steps!=1){
+      return false
     }
 
     true
